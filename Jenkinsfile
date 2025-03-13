@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('git-cloning') {
             steps {
-                sh 'git clone url:'https://github.com/rakeshrevashetti/maven-repo.git' branch:'main''
+                checkout scm
             }
         }
         stage('build') {
