@@ -1,34 +1,23 @@
 pipeline {
-   
-    agent { label 'Slave-Node'}
-    tools{
-        maven 'maven'
-    }
-
+    agent { label 'slavenode1'}
+    tools { maven 'maven1'}
     stages {
-        stage ('Checkout_SCM') {
-
+        stage('git-cloning') {
             steps {
-          	    
-	     checkout scm
+                sh 'git clone url:'https://github.com/rakeshrevashetti/maven-repo.git' branch:'main''
             }
         }
-
-        stage ('Maven_Build') {
-
+        stage('build') {
             steps {
-               sh 'mvn clean package'
+                sh 'mvn clean package'
             }
         }
-        
-        stage ('Deploy_Tomcat') {
-
+        stage(deploy) {
             steps {
-	      sshagent(['Tomcat']) {
-              sh "scp -o StrictHostKeyChecking=no  target/maven-web-application.war  ec2-user@13.233.98.241:/opt/tomcat9/webapps"
-	      }
-         }
-        }
-        
+                sshagent([['tomcat']]) {
+                    sh 'scp -o strictHostKeyChecking=no target/maven-web-application.war ec2-user@54.171.133.255:/opt/tomcat9/webapps'
+                }
+            }
+        }    
     }
 }
